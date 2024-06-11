@@ -1,32 +1,48 @@
-import re
 from collections import defaultdict
 
 BACKSLASH = '\\'
 SKIP_LINE = '\n\n'
-
-specials = ['\\' '{', '}', '#', '^', '␣', '%']
+SPECIALS = ['\\' '{', '}', '#', '^', '␣', '%']
 
 
 def in_fig(text):
+    """
+    incase text in {}
+    Params:
+       text: str - text
+    Returns:
+        text: str - {text}
+    """
     return '{' + text + '}'
 
 
-def open_file(filename):
-    text = open(filename, encoding='utf-8').read()
-    return text
-
-
-def fakeverb(text):
-    for special in specials:
+def remove_specials(text):
+    """
+    add backslashes to the following special symbols: \\, \{, \}, \#, \^ and \␣, \%
+    Params:
+       text: str - text with control symbols
+    Returns:
+        text: str - text with removed control symbols
+    """
+    for special in SPECIALS:
         text = text.replace(special, BACKSLASH + special)
     return text
 
 
 def elan_data(file):
-    # elan = elan.replace('&', '')
-    # elan = elan.replace('<', '&lt;')
-    # elan = elan.replace('>', '&gt;')
-    elan = open_file(file).splitlines()
+    """
+    collect data from delimited file, imported from ELAN
+    Params:
+       file: str - .txt file
+    Returns:
+        transc - array of entries' transcriptions
+        transl - array of entries' translations
+        gloss - array of entries' glosses
+        comment - array of entries' comments
+    """
+    with open(file, encoding='utf-8') as f:
+        elan = f.read().splitlines()
+
     transc = defaultdict(str)
     transl = defaultdict(str)
     gloss = defaultdict(str)
@@ -55,7 +71,34 @@ def elan_data(file):
     return transc, transl, gloss, comment
 
 
+def mapping(transc, transl, gloss, comment):
+    """
+    map entries by timestamps
+    Params:
+        transc - array of entries' transcriptions
+        transl - array of entries' translations
+        gloss - array of entries' glosses
+        comment - array of entries' comments
+    Returns:
+        pivot_dic: dict - timestamp: [transcription, translation, gloss, comment]
+    """
+    pivot_dic = {}
+
+    for key, value in transc.items():
+        trnsl = transl[key]
+        gls = gloss[key]
+        cmnt = comment[key]
+        pivot_dic[key] = [value, trnsl, gls, cmnt]
+
+    return pivot_dic
+
+
 def to_latex(file):
+    """
+    convert delimited file, imported from ELAN to LaTeX with the same name
+    Params:
+       file: str - .txt file
+    """
     if file == '':
         file = '1.txt'
     transc, transl, gloss, comment = elan_data(file)
@@ -104,32 +147,16 @@ def to_latex(file):
             with open("subsection_header.tex", "r") as subsection_header:
                 f.write(subsection_header.read())
 
-            f.write(' & '.join(map(lambda x: fakeverb(x), transcription_tokens)) + ' ' + BACKSLASH * 2 + '\n')
-            f.write(' & '.join(map(lambda x: fakeverb(x), glosses_tokens)) + ' ' + BACKSLASH * 2 + '\n')
+            f.write(' & '.join(map(lambda x: remove_specials(x), transcription_tokens)) + ' ' + BACKSLASH * 2 + '\n')
+            f.write(' & '.join(map(lambda x: remove_specials(x), glosses_tokens)) + ' ' + BACKSLASH * 2 + '\n')
             # f.write(BACKSLASH + 'enquote' + in_fig(translation) + ' ' + BACKSLASH*2 + '\n' )
-            f.write(fakeverb('"' + translation + '"') + ' ' + BACKSLASH * 2 + '\n')
-            f.write(fakeverb(f'{key[0]} — {key[1]}') + ' ' + BACKSLASH * 2 + '\n')
-            f.write(fakeverb(comment) + (' ' + BACKSLASH * 2 + '\n') * (comment != ''))
+            f.write(remove_specials('"' + translation + '"') + ' ' + BACKSLASH * 2 + '\n')
+            f.write(remove_specials(f'{key[0]} — {key[1]}') + ' ' + BACKSLASH * 2 + '\n')
+            f.write(remove_specials(comment) + (' ' + BACKSLASH * 2 + '\n') * (comment != ''))
 
             f.write("\\end{tblr}" + SKIP_LINE)
 
         f.write('\\end{document}')
-
-
-def mapping(transc, transl, gloss, comment):
-    pivot_dic = {}
-    for key, value in transc.items():
-        trnsl = transl[key]
-        gls = gloss[key]
-        cmnt = comment[key]
-        pivot_dic[key] = [value, trnsl, gls, cmnt]
-    return pivot_dic
-
-
-def glossing(text):
-    # text = text.replace(' ', '\t')
-    glossed_text = re.split(r'([a-z+])', text)
-    return glossed_text
 
 
 def main():
