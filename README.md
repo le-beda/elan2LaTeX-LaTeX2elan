@@ -1,8 +1,8 @@
 # elan2LaTeX & LaTeX2elan
 
 This tool allows to:
-* convert delimited text exported from ELAN into `.md`files.
-* convert properly formatted `.md`files into `.eaf` files.
+* convert delimited text exported from ELAN into `.tex`files.
+* convert properly formatted `.tex`files into `.eaf` files.
 
 ## Instruction
 
@@ -14,5 +14,5 @@ This tool allows to:
   * comment (any additional information)
 
 ### LaTeX2elan
-1. Provide a LaTeX file, formatted like `example.md`.
+1. Provide a LaTeX file, formatted like `example.tex`.
 
