@@ -6,12 +6,15 @@ SKIP_LINE = '\n\n'
 
 specials = ['\\' '{', '}', '#', '^', '␣', '%']
 
+
 def in_fig(text):
     return '{' + text + '}'
+
 
 def open_file(filename):
     text = open(filename, encoding='utf-8').read()
     return text
+
 
 def fakeverb(text):
     for special in specials:
@@ -58,26 +61,26 @@ def to_latex(file):
     transc, transl, gloss, comment = elan_data(file)
     pivot_dictionary = mapping(transc, transl, gloss, comment)
 
-    informant = input('Enter informant code ')
-    expeditioner = input('Enter expeditioner code ')
-    expeditiondate = input('Enter epedition date ')
-    whoelse = input('Who else was there? ')
-    theme = input('Approx theme? ')
+    informant = input('Enter informant code \n')
+    expeditioner = input('Enter expeditioner code \n')
+    expeditiondate = input('Enter epedition date \n')
+    whoelse = input('Who else was there? \n')
+    theme = input('Approx theme? \n')
 
     tex_file = '.'.join(file.split('.')[:-1]) + '.tex'
 
     with open(tex_file, "w") as f:
         with open("header.tex", "r") as header:
-            f.write(header.read()) 
+            f.write(header.read())
 
-        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'informant')}{in_fig(informant)}\n")
-        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'expeditioner')}{in_fig(expeditioner)}\n")
-        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'expeditiondate')}{in_fig(expeditiondate)}\n")
-        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'whoelse')}{in_fig(whoelse)}\n")
-        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'theme')}{in_fig(theme)}" + SKIP_LINE)
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH + 'informant')}{in_fig(informant)}\n")
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH + 'expeditioner')}{in_fig(expeditioner)}\n")
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH + 'expeditiondate')}{in_fig(expeditiondate)}\n")
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH + 'whoelse')}{in_fig(whoelse)}\n")
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH + 'theme')}{in_fig(theme)}" + SKIP_LINE)
 
         with open("metadata.tex", "r") as metadata:
-            f.write(metadata.read()) 
+            f.write(metadata.read())
 
         for key, value in pivot_dictionary.items():
 
@@ -96,21 +99,21 @@ def to_latex(file):
                 transcription_tokens.extend([''] * (len_gloss - len_transc))
 
             word_cnt = len(transcription_tokens)
-            f.write( '\\renewcommand{\\columncnt}' + in_fig(str(word_cnt)) + '\n' )
+            f.write('\\renewcommand{\\columncnt}' + in_fig(str(word_cnt)) + '\n')
 
             with open("subsection_header.tex", "r") as subsection_header:
-                f.write(subsection_header.read()) 
+                f.write(subsection_header.read())
 
-            f.write(' & '.join(map(lambda  x: fakeverb(x), transcription_tokens)) + ' ' + BACKSLASH*2 + '\n' )
-            f.write(' & '.join(map(lambda  x: fakeverb(x), glosses_tokens)) + ' ' + BACKSLASH*2 + '\n')
+            f.write(' & '.join(map(lambda x: fakeverb(x), transcription_tokens)) + ' ' + BACKSLASH * 2 + '\n')
+            f.write(' & '.join(map(lambda x: fakeverb(x), glosses_tokens)) + ' ' + BACKSLASH * 2 + '\n')
             # f.write(BACKSLASH + 'enquote' + in_fig(translation) + ' ' + BACKSLASH*2 + '\n' )
-            f.write(fakeverb('"' + translation + '"') + ' ' + BACKSLASH*2 + '\n' )
-            f.write(fakeverb(f'{key[0]} — {key[1]}') + ' ' + BACKSLASH*2 + '\n' )
-            f.write(fakeverb(comment) + ( ' ' + BACKSLASH*2 + '\n') * (comment != ''))
+            f.write(fakeverb('"' + translation + '"') + ' ' + BACKSLASH * 2 + '\n')
+            f.write(fakeverb(f'{key[0]} — {key[1]}') + ' ' + BACKSLASH * 2 + '\n')
+            f.write(fakeverb(comment) + (' ' + BACKSLASH * 2 + '\n') * (comment != ''))
 
             f.write("\\end{tblr}" + SKIP_LINE)
 
-        f.write('\\end{document}') 
+        f.write('\\end{document}')
 
 
 def mapping(transc, transl, gloss, comment):
@@ -130,7 +133,7 @@ def glossing(text):
 
 
 def main():
-    file = input('Input the name of .txt file, imported from ELAN (default = 1.txt on Enter) ')
+    file = input('Input the name of .txt file, imported from ELAN (default = 1.txt on Enter) \n')
     to_latex(file)
 
 
