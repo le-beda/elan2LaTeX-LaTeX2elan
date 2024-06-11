@@ -95,7 +95,7 @@ def mapping(transc, transl, gloss, comment):
 
 def to_latex(file):
     """
-    convert delimited file, imported from ELAN to LaTeX with the same name
+    convert delimited file, imported from ELAN, to LaTeX with the same name
     Params:
        file: str - .txt file
     """
