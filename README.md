@@ -1,7 +1,7 @@
 # elan2LaTeX & LaTeX2elan
 
 This tool allows to:
-* convert delimited text exported from ELAN into `.tex`files.
+* convert delimited text exported from ELAN into `.tex` files.
 * convert properly formatted `.tex` files into `.eaf` files.
 
 ## Instruction
