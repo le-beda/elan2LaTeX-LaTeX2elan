@@ -15,9 +15,10 @@ This tool allows to:
 
 ![example.eaf screenshot](imgs/elan_example.png)
 
-2. Export as delimited file as shown on the screenshot (results in example.txt)
+2. Export as delimited file as shown on the following screenshots (results in example.txt)
 
 ![export example](imgs/export_example.png)
+![export example](imgs/settings_example.png)
 
 3. **Run `elan2LaTeX.py`**
 4. Convert resulting `.tex` file to pdf using [overleaf](https://www.overleaf.com/) (results in example.pdf)
