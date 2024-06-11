@@ -8,21 +8,23 @@ SPECIALS = ['\\' '{', '}', '#', '^', '␣', '%']
 def in_fig(text):
     """
     incase text in {}
-    Params:
-       text: str - text
+
+    Args:
+       text (str): initial text
     Returns:
-        text: str - {text}
+        text (str): {text}
     """
     return '{' + text + '}'
 
 
 def remove_specials(text):
     """
-    add backslashes to the following special symbols: \\, \{, \}, \#, \^ and \␣, \%
-    Params:
-       text: str - text with control symbols
+    add backslashes to the following special symbols: \\, \{, \}, \#, \^, \␣, \%
+
+    Args:
+       text (str): text with special symbols
     Returns:
-        text: str - text with removed control symbols
+        text (str): text with removed special symbols
     """
     for special in SPECIALS:
         text = text.replace(special, BACKSLASH + special)
@@ -32,13 +34,12 @@ def remove_specials(text):
 def elan_data(file):
     """
     collect data from delimited file, imported from ELAN
-    Params:
-       file: str - .txt file
+
+    Args:
+       file (str): txt file
     Returns:
-        transc - array of entries' transcriptions
-        transl - array of entries' translations
-        gloss - array of entries' glosses
-        comment - array of entries' comments
+        (transc, transl, gloss, comment):
+        arrays of entries' transcriptions, translations, glosses, comments
     """
     with open(file, encoding='utf-8') as f:
         elan = f.read().splitlines()
@@ -74,13 +75,14 @@ def elan_data(file):
 def mapping(transc, transl, gloss, comment):
     """
     map entries by timestamps
-    Params:
-        transc - array of entries' transcriptions
-        transl - array of entries' translations
-        gloss - array of entries' glosses
-        comment - array of entries' comments
+
+    Args:
+        transc: array of entries' transcriptions
+        transl: array of entries' translations
+        gloss: array of entries' glosses
+        comment: array of entries' comments
     Returns:
-        pivot_dic: dict - timestamp: [transcription, translation, gloss, comment]
+        pivot_dic: dict of timestamps: [transcription, translation, gloss, comment]
     """
     pivot_dic = {}
 
@@ -95,9 +97,10 @@ def mapping(transc, transl, gloss, comment):
 
 def to_latex(file):
     """
-    convert delimited file, imported from ELAN, to LaTeX with the same name
-    Params:
-       file: str - .txt file
+    convert delimited file, imported from ELAN, to LaTeX file with the same name
+
+    Args:
+       file (str): txt file
     """
     if file == '':
         file = '1.txt'
