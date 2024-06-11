@@ -1,0 +1,138 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{graphicx} 
+\usepackage[english, russian]{babel}
+\usepackage[babel=true]{csquotes}
+\usepackage{array}
+\usepackage{parskip}
+\usepackage{multirow}
+\usepackage{tabularray}
+\usepackage{geometry}
+\renewcommand{\thesubsection}{\arabic{subsection}}
+
+\geometry{left=2.5cm}% левое поле
+\geometry{right=1.0cm}% правое поле
+\geometry{top=2.0cm}% верхнее поле
+\geometry{bottom=2.0cm}% нижнее поле
+
+\newcommand{\informant}{1}
+\newcommand{\expeditioner}{1}
+\newcommand{\expeditiondate}{1}
+\newcommand{\whoelse}{1}
+\newcommand{\theme}{1}
+
+\begin{document}
+
+\section*{Метаданные}
+
+\begin{tblr}{
+colspec = {*{2}{l}},
+column{1} = {font=\bfseries}
+}
+Информант & \informant \\
+Экспедиционер & \expeditioner \\
+Дата & \expeditiondate \\
+Кто ещё был на паре & \whoelse \\
+Примерная тематика & \theme \\
+\end{tblr}
+
+\section*{Данные по времени}
+
+\renewcommand{\columncnt}{4}
+% set \columncnt to current word count
+\subsection{\informant\_\expeditiondate@\expeditioner\_\thesubsection}
+\begin{tblr}{
+colspec = {*{\columncnt}{l}},
+row{1} = {font=\itshape},
+cell{3}{1} = {c=\columncnt}{l},
+cell{4}{1} = {c=\columncnt}{l},
+cell{5}{1} = {c=\columncnt}{l}
+}
+etiken & men-*(ken) & em-ni-n & okat-təki \\
+старик & int-dim & прийти-pst-3sg & река-dir \\
+"старик сам пришёл к реке" \\
+00:12:11.454 — 00:12:18.454 \\
+\end{tblr}
+
+\renewcommand{\columncnt}{4}
+% set \columncnt to current word count
+\subsection{\informant\_\expeditiondate@\expeditioner\_\thesubsection}
+\begin{tblr}{
+colspec = {*{\columncnt}{l}},
+row{1} = {font=\itshape},
+cell{3}{1} = {c=\columncnt}{l},
+cell{4}{1} = {c=\columncnt}{l},
+cell{5}{1} = {c=\columncnt}{l}
+}
+etiken & men-ken & men-i & awa-d-da-n \\
+старик & int-dim & int-refl.sg & мыть-prog-nfut-3sg \\
+"старик сам себя моет" \\
+00:12:54.804 — 00:13:00.354 \\
+\end{tblr}
+
+\renewcommand{\columncnt}{4}
+% set \columncnt to current word count
+\subsection{\informant\_\expeditiondate@\expeditioner\_\thesubsection}
+\begin{tblr}{
+colspec = {*{\columncnt}{l}},
+row{1} = {font=\itshape},
+cell{3}{1} = {c=\columncnt}{l},
+cell{4}{1} = {c=\columncnt}{l},
+cell{5}{1} = {c=\columncnt}{l}
+}
+men-*(ken) & etiken & d'u-tki & em-ni-n \\
+int-dim & старик & дом-dir & прийти-pst-3sg \\
+"сам старик домой пришёл" \\
+00:13:48.870 — 00:13:52.999 \\
+\end{tblr}
+
+\renewcommand{\columncnt}{4}
+% set \columncnt to current word count
+\subsection{\informant\_\expeditiondate@\expeditioner\_\thesubsection}
+\begin{tblr}{
+colspec = {*{\columncnt}{l}},
+row{1} = {font=\itshape},
+cell{3}{1} = {c=\columncnt}{l},
+cell{4}{1} = {c=\columncnt}{l},
+cell{5}{1} = {c=\columncnt}{l}
+}
+me-r-ke-r & etike-r & em-ni-ten & d'u-tki \\
+int-pl-dim-pl & старик-pl & прийти-pst-3pl & дом-dir \\
+"сами старики домой пришли" \\
+00:14:14.354 — 00:14:20.902 \\
+\end{tblr}
+
+\renewcommand{\columncnt}{3}
+% set \columncnt to current word count
+\subsection{\informant\_\expeditiondate@\expeditioner\_\thesubsection}
+\begin{tblr}{
+colspec = {*{\columncnt}{l}},
+row{1} = {font=\itshape},
+cell{3}{1} = {c=\columncnt}{l},
+cell{4}{1} = {c=\columncnt}{l},
+cell{5}{1} = {c=\columncnt}{l}
+}
+oleg & men-i & awu-ri-n \\
+O. & int-refl.sg & мыть-pst-3sg \\
+"Олег себя помыл" \\
+00:27:29.190 — 00:27:33.809 \\
+на фотографии \\
+\end{tblr}
+
+\renewcommand{\columncnt}{2}
+% set \columncnt to current word count
+\subsection{\informant\_\expeditiondate@\expeditioner\_\thesubsection}
+\begin{tblr}{
+colspec = {*{\columncnt}{l}},
+row{1} = {font=\itshape},
+cell{3}{1} = {c=\columncnt}{l},
+cell{4}{1} = {c=\columncnt}{l},
+cell{5}{1} = {c=\columncnt}{l}
+}
+\#oleg & awu-ri-n \\
+O. & мыть-pst-3sg \\
+"Олег себя помыл" \\
+00:27:34.523 — 00:27:38.428 \\
+на фотографии \\
+\end{tblr}
+
+\end{document}

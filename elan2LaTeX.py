@@ -1,38 +1,21 @@
 import re
 from collections import defaultdict
 
-from PIL import ImageFont
+BACKSLASH = '\\'
+SKIP_LINE = '\n\n'
 
-from docx import Document
-from docx.shared import Pt, Cm
+specials = ['\\' '{', '}', '#', '^', '␣', '%']
 
-
-MAX_LINE_LEN = 70
-
-OUT_FONT = 'Times New Roman'
-OUT_FONT_BACKUP = ['times.ttf']
-OUT_FONT_POINTS = 12
-
-FACTOR_TABS = 1
-
-
-def get_text_dimensions(text, points, font_filename):
-    try:
-        font = ImageFont.truetype(font_filename, points)
-    except OSError as e:
-        for font_option in OUT_FONT_BACKUP:
-            try:
-                font = ImageFont.truetype(font_option, points)
-            except OSError as e_backup:
-                pass
-
-    size = font.getsize(text.upper())
-
-    return size
-
+def in_fig(text):
+    return '{' + text + '}'
 
 def open_file(filename):
     text = open(filename, encoding='utf-8').read()
+    return text
+
+def fakeverb(text):
+    for special in specials:
+        text = text.replace(special, BACKSLASH + special)
     return text
 
 
@@ -69,154 +52,65 @@ def elan_data(file):
     return transc, transl, gloss, comment
 
 
-def to_word(pivot_dictionary):
-    informant = input('введите код информанта ')
-    date = input('введите дату ')
-    expe = input('введите свой код ')
-    name = f'eve_{informant}_{date}_{expe}'
+def to_latex(file):
+    if file == '':
+        file = '1.txt'
+    transc, transl, gloss, comment = elan_data(file)
+    pivot_dictionary = mapping(transc, transl, gloss, comment)
 
-    document = Document()
-    sections = document.sections
-    for section in sections:
-        section.top_margin = Cm(1.5)
-        section.bottom_margin = Cm(1.5)
-        section.left_margin = Cm(2.5)
-        section.right_margin = Cm(1.5)
+    informant = input('Enter informant code ')
+    expeditioner = input('Enter expeditioner code ')
+    expeditiondate = input('Enter epedition date ')
+    whoelse = input('Who else was there? ')
+    theme = input('Approx theme? ')
 
-    document.add_paragraph()
+    tex_file = '.'.join(file.split('.')[:-1]) + '.tex'
 
-    table = document.add_table(rows=5, cols=2)
-    table.columns[0].width = Cm(4.5)
-    table.columns[1].width = Cm(12.5)
+    with open(tex_file, "w") as f:
+        with open("header.tex", "r") as header:
+            f.write(header.read()) 
 
-    inf = table.rows[0].cells
-    inf[0].text, inf[1].text = 'Информант', informant
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'informant')}{in_fig(informant)}\n")
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'expeditioner')}{in_fig(expeditioner)}\n")
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'expeditiondate')}{in_fig(expeditiondate)}\n")
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'whoelse')}{in_fig(whoelse)}\n")
+        f.write(f"{BACKSLASH}newcommand{in_fig(BACKSLASH+'theme')}{in_fig(theme)}" + SKIP_LINE)
 
-    exp = table.rows[1].cells
-    exp[0].text, exp[1].text = 'Экспедиционер', expe
+        with open("metadata.tex", "r") as metadata:
+            f.write(metadata.read()) 
 
-    dat = table.rows[2].cells
-    dat[0].text, dat[1].text = 'Дата', date
+        for key, value in pivot_dictionary.items():
 
-    els = table.rows[3].cells
-    els[0].text, els[1].text = 'Кто ещё был на паре', input('Кто ещё был на паре? ')
+            transcription = value[0]
+            translation = value[1]
+            gloss = value[2]
+            comment = value[3]
 
-    inf = table.rows[4].cells
-    inf[0].text, inf[1].text = 'Примерная тематика', input('Примерная тематика ')
+            transcription_tokens = transcription.split(' ')
+            glosses_tokens = gloss.split(' ')
+            len_transc = len(transcription_tokens)
+            len_gloss = len(glosses_tokens)
+            if len_transc > len_gloss:
+                glosses_tokens.extend([''] * (len_transc - len_gloss))
+            elif len_gloss > len_transc:
+                transcription_tokens.extend([''] * (len_gloss - len_transc))
 
-    for row in table.rows:
-        for cell in row.cells:
-            cell.paragraphs[0].paragraph_format.space_after = Cm(0)
-    document.add_paragraph().paragraph_format.space_after = Cm(0)
+            word_cnt = len(transcription_tokens)
+            f.write( '\\renewcommand{\\columncnt}' + in_fig(str(word_cnt)) + '\n' )
 
-    for counter, (key, value) in enumerate(pivot_dictionary.items(), start=1):
-        header = f'{informant}_{date}@{expe}_{counter}'
-        transcription = value[0]
-        translation = value[1]
-        gloss = value[2]
-        comment = value[3]
+            with open("subsection_header.tex", "r") as subsection_header:
+                f.write(subsection_header.read()) 
 
-        p = document.add_paragraph(header, style='List Number')
-        p.paragraph_format.space_after = Cm(0.1)
+            f.write(' & '.join(map(lambda  x: fakeverb(x), transcription_tokens)) + ' ' + BACKSLASH*2 + '\n' )
+            f.write(' & '.join(map(lambda  x: fakeverb(x), glosses_tokens)) + ' ' + BACKSLASH*2 + '\n')
+            # f.write(BACKSLASH + 'enquote' + in_fig(translation) + ' ' + BACKSLASH*2 + '\n' )
+            f.write(fakeverb('"' + translation + '"') + ' ' + BACKSLASH*2 + '\n' )
+            f.write(fakeverb(f'{key[0]} — {key[1]}') + ' ' + BACKSLASH*2 + '\n' )
+            f.write(fakeverb(comment) + ( ' ' + BACKSLASH*2 + '\n') * (comment != ''))
 
-        transcriptions = []
-        glosses = []
+            f.write("\\end{tblr}" + SKIP_LINE)
 
-        transcription_tokens = transcription.split(' ')
-        glosses_tokens = gloss.split(' ')
-        len_transc = len(transcription_tokens)
-        len_gloss = len(glosses_tokens)
-        if len_transc > len_gloss:
-            glosses_tokens.extend([''] * (len_transc - len_gloss))
-        elif len_gloss > len_transc:
-            transcription_tokens.extend([''] * (len_gloss - len_transc))
-        gl_cur_len, gl_cur_run = 0, []
-        transcr_cur_len, transcr_cur_run = 0, []
-        last_par_index = 0
-
-        # accumulate transcription / glosses, until adding next glosses exceeds space
-        # then begin new lines and go on
-        for i, (transcription_token, gloss_token) in enumerate(
-                zip(transcription_tokens, glosses_tokens)):
-            if (gl_cur_len + len(gloss_token) <= MAX_LINE_LEN
-                and transcr_cur_len + len(transcription_token) <= MAX_LINE_LEN):
-                transcr_cur_run.append(transcription_token)
-                gl_cur_run.append(gloss_token)
-                transcr_cur_len += len(transcription_token)
-                gl_cur_len += len(gloss_token)
-            else:
-                transcriptions.append(transcr_cur_run)
-                glosses.append(gl_cur_run)
-                last_par_index += 1
-
-                transcr_cur_run = [transcription_token]
-                gl_cur_run = [gloss_token]
-                transcr_cur_len, gl_cur_len = len(transcription_token), len(gloss_token)
-        else:
-            if len(glosses) - 1 == last_par_index - 1:
-                # if num of added lines is 1 less than needed, add remaining
-                transcriptions.append(transcr_cur_run)
-                glosses.append(gl_cur_run)
-
-        # tab stops determined on the go using native length rendering with font
-        for i, (transcription_line, gloss_line) in enumerate(
-                zip(transcriptions, glosses)):
-            print(transcription_line, gloss_line)
-
-            left_indent = 0.5
-            tab_stops = [left_indent]
-            for i, (transcr, gloss) in enumerate(
-                    zip(transcription_line, gloss_line), start=1):
-                transcr_dim = get_text_dimensions(transcr, OUT_FONT_POINTS, OUT_FONT)
-                gloss_dim = get_text_dimensions(gloss, OUT_FONT_POINTS, OUT_FONT)
-                max_dim = max((transcr_dim[0], gloss_dim[0]))
-                add_cm = (
-                        FACTOR_TABS * ((max_dim // 30) * 1 + int(((max_dim % 30) / 30) * 4) / 4)
-                        + 0.15
-                )
-                # TODO: this may interfere with line estimations from earlier
-                # print(transcr, gloss, transcr_dim, gloss_dim, add_cm)
-                # if add_cm < 1:
-                #     add_cm = 1
-
-                tab_stops.insert(i, tab_stops[i-1] + add_cm)
-
-            p_transcription = document.add_paragraph()
-            paragraph_format = p_transcription.paragraph_format
-            paragraph_format.space_after = Cm(0)
-            paragraph_format.left_indent = Cm(left_indent)
-            p_transcription.add_run('\t'.join(transcription_line)).font.italic = True
-
-            p_glosses = document.add_paragraph()
-            paragraph_format = p_glosses.paragraph_format
-            paragraph_format.space_after = Cm(0)
-            paragraph_format.left_indent = Cm(0.5)
-
-            for paragraph in (p_transcription, p_glosses):  # add all tab stops
-                for tab_stop in tab_stops[1:]:
-                    paragraph.paragraph_format.tab_stops.add_tab_stop(
-                        Cm(tab_stop)
-                    )
-
-            for part in glossing('\t'.join(gloss_line)):
-                if re.match(r'[a-z+]', part):
-                    p_glosses.add_run(part).font.small_caps = True
-                else:
-                    p_glosses.add_run(part)
-
-        p = document.add_paragraph()
-        paragraph_format = p.paragraph_format
-        paragraph_format.space_after = Cm(0.1)
-        paragraph_format.left_indent = Cm(0.5)
-        p.add_run(f'‘{translation}’')
-        p = document.add_paragraph()
-        p.add_run(f'{key[0]} — {key[1]} {comment}')
-
-    for paragraph in document.paragraphs:
-        f = paragraph.style.font
-        f.name = 'Times New Roman'
-        f.size = Pt(12)
-    document.save(f'{name}.docx')
+        f.write('\\end{document}') 
 
 
 def mapping(transc, transl, gloss, comment):
@@ -236,12 +130,8 @@ def glossing(text):
 
 
 def main():
-    file = input('введите название илановского файла или назовите его 1.txt и нажмите Enter')
-    if file == '':
-        file = '1.txt'
-    transc, transl, gloss, comment = elan_data(file)
-    mapped_dic = mapping(transc, transl, gloss, comment)
-    to_word(mapped_dic)
+    file = input('Input the name of .txt file, imported from ELAN (default = 1.txt on Enter) ')
+    to_latex(file)
 
 
 if __name__ == '__main__':
