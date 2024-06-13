@@ -1,6 +1,6 @@
 \documentclass[a4paper,12pt]{article}
-\usepackage{graphicx} 
 \usepackage[english, russian]{babel}
+\usepackage{graphicx}
 \usepackage[babel=true]{csquotes}
 \usepackage{array}
 \usepackage{parskip}
@@ -9,10 +9,10 @@
 \usepackage{geometry}
 \renewcommand{\thesubsection}{\arabic{subsection}}
 
-\geometry{left=2.5cm}% левое поле
-\geometry{right=1.0cm}% правое поле
-\geometry{top=2.0cm}% верхнее поле
-\geometry{bottom=2.0cm}% нижнее поле
+\geometry{left=2.5cm}
+\geometry{right=1.0cm}
+\geometry{top=2.0cm}
+\geometry{bottom=2.0cm}
 
 \newcommand{\informant}{BML}
 \newcommand{\expeditioner}{AB}
@@ -22,20 +22,20 @@
 
 \begin{document}
 
-\section*{Метаданные}
+\section*{Metadata}
 
 \begin{tblr}{
 colspec = {*{2}{l}},
 column{1} = {font=\bfseries}
 }
-Информант & \informant \\
-Экспедиционер & \expeditioner \\
-Дата & \expeditiondate \\
-Кто ещё был на паре & \whoelse \\
-Примерная тематика & \theme \\
+Informant & \informant \\
+Expeditioner & \expeditioner \\
+Date & \expeditiondate \\
+Other relevant people & \whoelse \\
+Conversation theme & \theme \\
 \end{tblr}
 
-\section*{Данные по времени}
+\section*{Annotation entries}
 
 \renewcommand{\columncnt}{4}
 % set \columncnt to current word count

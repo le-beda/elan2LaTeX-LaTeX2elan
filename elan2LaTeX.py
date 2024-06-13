@@ -52,7 +52,7 @@ def elan_data(file):
     for line in elan:
         tokens = line.split('\t')
         if len(tokens) == 9:
-            indices = (0, 2, 4, 8)
+            indices = (0, 2, 4, 8)  # with ticked duration option on ELAN export
         else:
             indices = (0, 2, 3, 4)
 
@@ -69,6 +69,7 @@ def elan_data(file):
             gloss[(time_start, time_finish)] = text
         elif layer == 'comment':
             comment[(time_start, time_finish)] = text
+
     return transc, transl, gloss, comment
 
 
@@ -116,6 +117,18 @@ def to_latex(file):
     tex_file = '.'.join(file.split('.')[:-1]) + '.tex'
 
     with open(tex_file, "w") as f:
+        f.write("\\documentclass[a4paper,12pt]{article}\n")
+
+        languages = input(
+'''Input languages present in your document, separated by commas.
+In babel usepackage last language is considered the main one, activated by default.
+(default = "english, russian" on Enter)'''
+        )
+        if languages == '':
+            languages = "english, russian"
+
+        f.write(f"\\usepackage[{languages}]" + "{babel}\n")
+
         with open("header.tex", "r") as header:
             f.write(header.read())
 
