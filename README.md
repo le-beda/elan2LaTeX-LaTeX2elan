@@ -27,4 +27,8 @@ This tool allows to:
 
 ### LaTeX2elan
 1. Provide a LaTeX file, formatted like `example.tex`.
-
+2. Provide a `.wav` audio file.
+3. Clone the repo `git clone https://github.com/le-beda/elan2LaTeX-LaTeX2elan.git`
+4. Go inside the repo `cd elan2LaTeX-LaTeX2elan`
+5. Run converter `python LaTeX2elan.py`
+6. Import resulting `.eaf` file to ELAN.
