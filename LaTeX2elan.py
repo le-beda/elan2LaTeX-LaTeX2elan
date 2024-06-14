@@ -3,7 +3,7 @@ import re
 doc_header_info = """<?xml version="1.0" encoding="UTF-8"?>
 <ANNOTATION_DOCUMENT AUTHOR="" DATE="2021-07-07T18:23:20+12:00" FORMAT="3.0" VERSION="3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/EAFv3.0.xsd">
     <HEADER MEDIA_FILE="" TIME_UNITS="milliseconds">
-        <MEDIA_DESCRIPTOR MEDIA_URL="ABSOLUTE_FILEPATH.wav" MIME_TYPE="audio/x-wav" RELATIVE_MEDIA_URL="RELATIVE_FILEPATH.wav"/>
+        <MEDIA_DESCRIPTOR MIME_TYPE="audio/x-wav"/>
         <PROPERTY NAME="URN">urn:nl-mpi-tools-elan-eaf:6d60ea90-53bc-42ad-b1b5-613f79d1b43a</PROPERTY>
         <PROPERTY NAME="lastUsedAnnotationId">20</PROPERTY>
     </HEADER>\n"""
@@ -209,8 +209,12 @@ def to_elan(file_path, audio_path, timeslots, transcs, transls, glosses, comment
     eaf_file = '.'.join(file_path.split('.')[:-1]) + '.eaf'
     
     file = open(eaf_file, "w")
-    file.write(doc_header_info)
-    
+    if audio_path != '':
+        file.write(doc_header_info.replace('MIME_TYPE="audio/x-wav"',
+                                           f'MEDIA_URL="{audio_path}" MIME_TYPE="audio/x-wav"'))
+    else:
+        file.write(doc_header_info)
+
     file.write('    <TIME_ORDER>\n')
     for timeslot in timeslots:
         file.write(timeslot_pattern.format(timeslot[0], timeslot[1]))
@@ -233,13 +237,11 @@ def to_elan(file_path, audio_path, timeslots, transcs, transls, glosses, comment
     
 def main():
     file = input('Input the name of .tex file, imported from LaTeX (default = 1.tex on Enter) \n')
-    audio = input('Input the name of associated audio .wav file (default = 1 on Enter) \n')
+    audio = input('Input the name of associated audio .wav file (default = None on Enter) \n')
     # TODO use .wav file in document header
 
     if file == '':
         file = '1.tex'
-    if audio == '':
-        audio = '1.wav'
     
     timeslots, transcs, transls, glosses, comments = latex_data(file)
     
