@@ -18,7 +18,7 @@ doc_ending = """    <LINGUISTIC_TYPE GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_
     <CONSTRAINT DESCRIPTION="Time alignable annotations within the parent annotation's time interval, gaps are allowed" STEREOTYPE="Included_In"/>
 </ANNOTATION_DOCUMENT>"""
 
-NEW_LINE = ' \\\n'
+NEW_LINE = ' \\\\\n'
 AMPERSAND = ' & '
 
 
@@ -105,20 +105,18 @@ def parse_block(data, line_id):
        entry's timestamps, transcription, glosses, translation, (optional) comment
     """
     line_id += 2
-    transc = (data[line_id].rstrip(NEW_LINE)).split(AMPERSAND)
+    transc = (data[line_id][:-len(NEW_LINE)]).split(AMPERSAND)
     line_id += 1
-    gloss = (data[line_id].rstrip(NEW_LINE)).split(AMPERSAND)
+    gloss = (data[line_id][:-len(NEW_LINE)]).split(AMPERSAND)
     line_id += 1
-    print(data[line_id])
-    print(data[line_id].lstrip("\\enquote").lstrip("{").rstrip('}' + NEW_LINE))
-    transl = data[line_id].lstrip('\\enquote').lstrip("{").rstrip('}' + NEW_LINE)
+    transl = data[line_id][len('\\enquote{'):][:-len('}' + NEW_LINE)]
     line_id += 1
-    time_start, time_finish = convert_timecode(data[line_id].rstrip(NEW_LINE).split(' — '))
+    time_start, time_finish = convert_timecode(data[line_id][:-len(NEW_LINE)].split(' — '))
     line_id += 1
 
     comment = ''
     if data[line_id] != '\\end{tblr}\n':
-        comment = data[line_id].rstrip(NEW_LINE)
+        comment = data[line_id][:-len(NEW_LINE)]
 
     transc = ' '.join(transc)
     gloss = ' '.join(gloss).lower()
