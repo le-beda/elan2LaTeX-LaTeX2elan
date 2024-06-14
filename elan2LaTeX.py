@@ -122,7 +122,7 @@ def to_latex(file):
         languages = input(
 '''Input languages present in your document, separated by commas.
 In babel usepackage last language is considered the main one, activated by default.
-(default = "english, russian" on Enter)'''
+(default = "english, russian" on Enter)\n'''
         )
         if languages == '':
             languages = "english, russian"
@@ -165,8 +165,8 @@ In babel usepackage last language is considered the main one, activated by defau
 
             f.write(' & '.join(map(lambda x: remove_specials(x), transcription_tokens)) + ' ' + BACKSLASH * 2 + '\n')
             f.write(' & '.join(map(lambda x: remove_specials(x), glosses_tokens)) + ' ' + BACKSLASH * 2 + '\n')
-            # f.write(BACKSLASH + 'enquote' + in_fig(translation) + ' ' + BACKSLASH*2 + '\n' )
-            f.write(remove_specials('"' + translation + '"') + ' ' + BACKSLASH * 2 + '\n')
+            f.write(BACKSLASH + 'enquote' + in_fig(translation) + ' ' + BACKSLASH*2 + '\n' )
+            # f.write(remove_specials('"' + translation + '"') + ' ' + BACKSLASH * 2 + '\n')
             f.write(remove_specials(f'{key[0]} — {key[1]}') + ' ' + BACKSLASH * 2 + '\n')
             f.write(remove_specials(comment) + (' ' + BACKSLASH * 2 + '\n') * (comment != ''))
 
