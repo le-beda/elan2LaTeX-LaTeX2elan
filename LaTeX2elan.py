@@ -205,8 +205,10 @@ def to_elan(file_path, audio_path, timeslots, transcs, transls, glosses, comment
     
     timeslot_pattern = """        <TIME_SLOT TIME_SLOT_ID="ts{}" TIME_VALUE="{}"/>\n"""
     tier_pattern = """    <TIER {}LINGUISTIC_TYPE_REF="{}" {}TIER_ID="{}">\n"""
+
+    eaf_file = '.'.join(file_path.split('.')[:-1]) + '.eaf'
     
-    file = open(file_path, "w")
+    file = open(eaf_file, "w")
     file.write(doc_header_info)
     
     file.write('    <TIME_ORDER>\n')
@@ -231,18 +233,17 @@ def to_elan(file_path, audio_path, timeslots, transcs, transls, glosses, comment
     
 def main():
     file = input('Input the name of .tex file, imported from LaTeX (default = 1.tex on Enter) \n')
-    audio = input('Input the name of associated audio .wav file (default = 1.wav on Enter) \n')
+    audio = input('Input the name of associated audio .wav file (default = 1 on Enter) \n')
     # TODO use .wav file in document header
 
     if file == '':
         file = '1.tex'
-    output_file = file[:-3]+'eaf'
     if audio == '':
         audio = '1.wav'
     
     timeslots, transcs, transls, glosses, comments = latex_data(file)
     
-    to_latex(file, audio, timeslots, transcs, transls, glosses, comments)
+    to_elan(file, audio, timeslots, transcs, transls, glosses, comments)
 
 
 if __name__ == '__main__':
