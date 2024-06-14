@@ -77,32 +77,32 @@
     <TIER DEFAULT_LOCALE="en" LINGUISTIC_TYPE_REF="wordtoword" PARENT_REF="transcription" TIER_ID="translation">
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a7" TIME_SLOT_REF1="ts2" TIME_SLOT_REF2="ts5">
-                <ANNOTATION_VALUE>"старик сам пришёл к реке"</ANNOTATION_VALUE>
+                <ANNOTATION_VALUE>старик сам пришёл к реке</ANNOTATION_VALUE>
             </ALIGNABLE_ANNOTATION>
         </ANNOTATION>
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a8" TIME_SLOT_REF1="ts8" TIME_SLOT_REF2="ts11">
-                <ANNOTATION_VALUE>"старик сам себя моет"</ANNOTATION_VALUE>
+                <ANNOTATION_VALUE>старик сам себя моет</ANNOTATION_VALUE>
             </ALIGNABLE_ANNOTATION>
         </ANNOTATION>
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a9" TIME_SLOT_REF1="ts14" TIME_SLOT_REF2="ts17">
-                <ANNOTATION_VALUE>"сам старик домой пришёл"</ANNOTATION_VALUE>
+                <ANNOTATION_VALUE>сам старик домой пришёл</ANNOTATION_VALUE>
             </ALIGNABLE_ANNOTATION>
         </ANNOTATION>
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a10" TIME_SLOT_REF1="ts20" TIME_SLOT_REF2="ts23">
-                <ANNOTATION_VALUE>"сами старики домой пришли"</ANNOTATION_VALUE>
+                <ANNOTATION_VALUE>сами старики домой пришли</ANNOTATION_VALUE>
             </ALIGNABLE_ANNOTATION>
         </ANNOTATION>
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a11" TIME_SLOT_REF1="ts26" TIME_SLOT_REF2="ts30">
-                <ANNOTATION_VALUE>"Олег себя помыл"</ANNOTATION_VALUE>
+                <ANNOTATION_VALUE>Олег себя помыл</ANNOTATION_VALUE>
             </ALIGNABLE_ANNOTATION>
         </ANNOTATION>
         <ANNOTATION>
             <ALIGNABLE_ANNOTATION ANNOTATION_ID="a12" TIME_SLOT_REF1="ts34" TIME_SLOT_REF2="ts38">
-                <ANNOTATION_VALUE>"Олег себя помыл"</ANNOTATION_VALUE>
+                <ANNOTATION_VALUE>Олег себя помыл</ANNOTATION_VALUE>
             </ALIGNABLE_ANNOTATION>
         </ANNOTATION>
     </TIER>
