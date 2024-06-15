@@ -1,15 +1,15 @@
 import re
 
-doc_header_info = """<?xml version="1.0" encoding="UTF-8"?>
+DOC_HEADER_INFO = """<?xml version="1.0" encoding="UTF-8"?>
 <ANNOTATION_DOCUMENT AUTHOR="" DATE="" FORMAT="3.0" VERSION="3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.mpi.nl/tools/elan/EAFv3.0.xsd">
     """
-media_header = """  <HEADER MEDIA_FILE="" TIME_UNITS="milliseconds">
+MEDIA_HEADER = """  <HEADER MEDIA_FILE="" TIME_UNITS="milliseconds">
         <MEDIA_DESCRIPTOR MEDIA_URL= MIME_TYPE="audio/x-wav"/>
         <PROPERTY NAME="URN">urn:nl-mpi-tools-elan-eaf:6d60ea90-53bc-42ad-b1b5-613f79d1b43a</PROPERTY>
         <PROPERTY NAME="lastUsedAnnotationId">20</PROPERTY>
     </HEADER>\n"""
 
-doc_ending = """    <LINGUISTIC_TYPE GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_ID="default-lt" TIME_ALIGNABLE="true"/>
+DOC_ENDING = """    <LINGUISTIC_TYPE GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_ID="default-lt" TIME_ALIGNABLE="true"/>
     <LINGUISTIC_TYPE CONSTRAINTS="Included_In" GRAPHIC_REFERENCES="false" LINGUISTIC_TYPE_ID="wordtoword" TIME_ALIGNABLE="true"/>
     <LOCALE LANGUAGE_CODE="en"/>
     <CONSTRAINT DESCRIPTION="Time subdivision of parent annotation's time interval, no time gaps allowed within this interval" STEREOTYPE="Time_Subdivision"/>
@@ -46,12 +46,12 @@ class Item:
        string (str): phrase
     """
     string = ''
-    TIME_SLOT_REF1, TIME_SLOT_REF2 = '', ''
+    time_slot_ref1, time_slot_ref2 = '', ''
 
-    def __init__(self, string, TIME_SLOT_REF1, TIME_SLOT_REF2):
+    def __init__(self, string, time_slot_ref1, time_slot_ref2):
         self.string = string
-        self.TIME_SLOT_REF1 = TIME_SLOT_REF1
-        self.TIME_SLOT_REF2 = TIME_SLOT_REF2
+        self.time_slot_ref1 = time_slot_ref1
+        self.time_slot_ref2 = time_slot_ref2
 
 
 def convert_timecode(time_interval):
@@ -140,7 +140,7 @@ def latex_data(file_path):
     glosses = []
     comments = []
     timeslots = []
-    TIME_SLOT_REF_CNT = Counter()
+    time_slot_ref_cnt = Counter()
 
     with open(file_path, 'r') as fp:
         data = fp.readlines()
@@ -150,12 +150,12 @@ def latex_data(file_path):
                 break
             time_start, time_finish, transc, gloss, transl, comment = parse_block(data, line_id)
 
-            refs1 = [TIME_SLOT_REF_CNT() for _ in range(3)]
+            refs1 = [time_slot_ref_cnt() for _ in range(3)]
             if comment != '':
-                refs1.append(TIME_SLOT_REF_CNT())
-            refs2 = [TIME_SLOT_REF_CNT() for _ in range(3)]
+                refs1.append(time_slot_ref_cnt())
+            refs2 = [time_slot_ref_cnt() for _ in range(3)]
             if comment != '':
-                refs2.append(TIME_SLOT_REF_CNT())
+                refs2.append(time_slot_ref_cnt())
 
             for ref in refs1:
                 timeslots.append([ref, time_start])
@@ -184,8 +184,8 @@ def write_tier(file, array):
     write info about one channel to file
 
     Args:
-       array (list): list of Items. represents information about either transcriptions, or translations,
-       or glossed phrases, or comments with timecodes
+       array (list): list of Items. represents information about either transcriptions,
+       or translations, or glossed phrases, or comments with timecodes
        file (str): eaf file
     """
 
@@ -197,7 +197,8 @@ def write_tier(file, array):
 
     for item in array:
         file.write(
-            annotation_pattern.format(ANNOTATION_ID_CNT(), item.TIME_SLOT_REF1, item.TIME_SLOT_REF2, item.string))
+            annotation_pattern.format(ANNOTATION_ID_CNT(), item.TIME_SLOT_REF1, item.TIME_SLOT_REF2,
+                                      item.string))
 
     file.write('    </TIER>\n')
 
@@ -222,9 +223,9 @@ def to_elan(file_path, audio_path, timeslots, transcs, transls, glosses, comment
     eaf_file = '.'.join(file_path.split('.')[:-1]) + '.eaf'
 
     file = open(eaf_file, "w")
-    file.write(doc_header_info)
+    file.write(DOC_HEADER_INFO)
     if audio_path != '':
-        file.write(media_header.replace('MEDIA_URL=',
+        file.write(MEDIA_HEADER.replace('MEDIA_URL=',
                                         f'MEDIA_URL="{audio_path}"'))
 
     file.write('    <TIME_ORDER>\n')
@@ -235,20 +236,25 @@ def to_elan(file_path, audio_path, timeslots, transcs, transls, glosses, comment
     file.write(tier_pattern.format('DEFAULT_LOCALE="en" ', 'default-lt', '', 'transcription'))
     write_tier(file, transcs)
 
-    file.write(tier_pattern.format('DEFAULT_LOCALE="en" ', 'wordtoword', 'PARENT_REF="transcription" ', 'translation'))
+    file.write(tier_pattern.format('DEFAULT_LOCALE="en" ', 'wordtoword',
+                                   'PARENT_REF="transcription" ', 'translation'))
     write_tier(file, transls)
 
-    file.write(tier_pattern.format('DEFAULT_LOCALE="en" ', 'wordtoword', 'PARENT_REF="transcription" ', 'gloss'))
+    file.write(tier_pattern.format('DEFAULT_LOCALE="en" ', 'wordtoword',
+                                   'PARENT_REF="transcription" ', 'gloss'))
     write_tier(file, glosses)
 
     file.write(tier_pattern.format('', 'wordtoword', 'PARENT_REF="transcription" ', 'comment'))
     write_tier(file, comments)
 
-    file.write(doc_ending)
+    file.write(DOC_ENDING)
     file.close()
 
 
 def main():
+    """
+    main function
+    """
     file = input('Input the name of .tex file, imported from LaTeX (default = 1.tex on Enter) \n')
     audio = input('Input the name of associated audio .wav file (default = None on Enter) \n')
     # TODO use .wav file in document header
