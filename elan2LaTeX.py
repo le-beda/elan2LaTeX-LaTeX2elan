@@ -163,8 +163,10 @@ In babel usepackage last language is considered the main one, activated by defau
             with open("subsection_header.tex", "r") as subsection_header:
                 f.write(subsection_header.read())
 
-            f.write(' & '.join(map(lambda x: remove_specials(x), transcription_tokens)) + ' ' + BACKSLASH * 2 + '\n')
-            f.write(' & '.join(map(lambda x: remove_specials(x), glosses_tokens)) + ' ' + BACKSLASH * 2 + '\n')
+            f.write(' & '.join(map(lambda x: remove_specials(x), transcription_tokens)) +
+                    ' ' + BACKSLASH * 2 + '\n')
+            f.write(' & '.join(map(lambda x: remove_specials(x), glosses_tokens)) +
+                    ' ' + BACKSLASH * 2 + '\n')
             f.write(BACKSLASH + 'enquote' + in_fig(translation) + ' ' + BACKSLASH*2 + '\n' )
             # f.write(remove_specials('"' + translation + '"') + ' ' + BACKSLASH * 2 + '\n')
             f.write(remove_specials(f'{key[0]} — {key[1]}') + ' ' + BACKSLASH * 2 + '\n')
@@ -176,6 +178,9 @@ In babel usepackage last language is considered the main one, activated by defau
 
 
 def main():
+    """
+    main function
+    """
     file = input('Input the name of .txt file, imported from ELAN (default = 1.txt on Enter) \n')
     to_latex(file)
 
